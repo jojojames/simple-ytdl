@@ -36,6 +36,15 @@ Created on demand if it does not already exist."
   :type 'string
   :group 'simple-ytdl)
 
+(defcustom simple-ytdl-cookies-from-browser "firefox"
+  "Browser to pull cookies from, or nil to disable.
+When non-nil, passed to yt-dlp as `--cookies-from-browser', which
+is required for sites that gate content behind a login (e.g.
+some Reddit posts).  Accepts any value yt-dlp recognises:
+`firefox', `chrome', `chromium', `brave', `edge', `safari', etc."
+  :type '(choice (const :tag "Disabled" nil) string)
+  :group 'simple-ytdl)
+
 (defcustom simple-ytdl-extra-args nil
   "Additional command-line arguments passed to yt-dlp.
 Appended after `simple-ytdl''s built-in arguments, so they can be
@@ -83,6 +92,9 @@ be found on `exec-path'."
                              "-f" "bv*+ba/b"
                              "--merge-output-format" "mp4"
                              "-o" "%(title).200B [%(id)s].%(ext)s")
+                       (when simple-ytdl-cookies-from-browser
+                         (list "--cookies-from-browser"
+                               simple-ytdl-cookies-from-browser))
                        simple-ytdl-extra-args
                        (list url))))
     (make-directory dir t)
